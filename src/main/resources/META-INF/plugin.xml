@@ -5,11 +5,51 @@
     <vendor>idevelopthings</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>PsiViewer</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.github.idevelopthings.customlanguageplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+
+        <fileType
+                name="Data Fusion"
+                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionFileType"
+                fieldName="INSTANCE"
+                language="DataFusion"
+                extensions="sl"
+        />
+
+        <lang.parserDefinition
+                language="DataFusion"
+                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionParserDefinition"
+        />
+
+        <lang.syntaxHighlighterFactory
+                language="DataFusion"
+                implementationClass="com.github.idevelopthings.customlanguageplugin.syntax.DataFusionSyntaxHighlighterFactory"
+        />
+
+        <colorSettingsPage
+                implementation="com.github.idevelopthings.customlanguageplugin.syntax.DataFusionColorSettingsPage"
+        />
+
+        <annotator language="DataFusion" implementationClass="com.github.idevelopthings.customlanguageplugin.syntax.CustomSyntaxAnnotator"/>
+
+        <lang.commenter
+                language="DataFusion"
+                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionCommenter"
+        />
+        <psi.referenceContributor
+                language="DataFusion"
+                implementation="com.github.idevelopthings.customlanguageplugin.DataFusionReferenceContributor"
+        />
+        <completion.contributor
+                language="DataFusion"
+                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionCompletionContributor"
+        />
+
+
     </extensions>
 
     <applicationListeners>
