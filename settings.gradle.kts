@@ -1,1 +1,1 @@
-rootProject.name = "custom_language_plugin"
+rootProject.name = "arc"

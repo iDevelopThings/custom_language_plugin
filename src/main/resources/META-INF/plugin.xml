@@ -1,6 +1,6 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.idevelopthings.customlanguageplugin</id>
+    <id>com.github.idevelopthings.arc</id>
     <name>custom_language_plugin Template</name>
     <vendor>idevelopthings</vendor>
 
@@ -9,50 +9,114 @@
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
+<!--    <application-components>-->
+<!--        <component>-->
+<!--            <implementation-class>org.wso2.lsp4intellij.IntellijLanguageClient</implementation-class>-->
+<!--        </component>-->
+<!--    </application-components>-->
+
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.idevelopthings.customlanguageplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <toolWindow factoryClass="com.github.idevelopthings.arc.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+
+        <applicationService serviceImplementation="org.wso2.lsp4intellij.IntellijLanguageClient"/>
+        <editorFactoryListener implementation="org.wso2.lsp4intellij.listeners.LSPEditorListener"/>
+        <fileDocumentManagerListener implementation="org.wso2.lsp4intellij.listeners.LSPFileDocumentManagerListener"/>
+
+        <!-- for displaying notifications by lsp -->
+        <notificationGroup id="lsp" displayType="STICKY_BALLOON"/>
+
+        <!-- for displaying the statusbar icon -->
+        <statusBarWidgetFactory implementation="org.wso2.lsp4intellij.statusbar.LSPServerStatusWidgetFactory"
+                                id="org.wso2.lsp4intellij.statusbar.LSPServerStatusWidgetFactory"
+                                order="first" />
+
+        <applicationInitializedListener
+                implementation="com.github.idevelopthings.arc.ArcApplicationInitializedListener"
+                id="ArcApplicationInitializedListener"
+                order="last"
+        />
+        <externalAnnotator
+                id="LSPAnnotator"
+                language="Arc"
+                implementationClass="org.wso2.lsp4intellij.contributors.annotator.LSPAnnotator"
+        />
 
         <fileType
                 name="Data Fusion"
-                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionFileType"
+                implementationClass="com.github.idevelopthings.arc.ArcFileType"
                 fieldName="INSTANCE"
-                language="DataFusion"
+                language="Arc"
                 extensions="sl"
         />
 
         <lang.parserDefinition
-                language="DataFusion"
-                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionParserDefinition"
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.ArcParserDefinition"
         />
 
         <lang.syntaxHighlighterFactory
-                language="DataFusion"
-                implementationClass="com.github.idevelopthings.customlanguageplugin.syntax.DataFusionSyntaxHighlighterFactory"
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.syntax.ArcSyntaxHighlighterFactory"
         />
 
         <colorSettingsPage
-                implementation="com.github.idevelopthings.customlanguageplugin.syntax.DataFusionColorSettingsPage"
+                implementation="com.github.idevelopthings.arc.syntax.ArcColorSettingsPage"
         />
 
-        <annotator language="DataFusion" implementationClass="com.github.idevelopthings.customlanguageplugin.syntax.CustomSyntaxAnnotator"/>
+        <annotator language="Arc" implementationClass="com.github.idevelopthings.arc.syntax.CustomSyntaxAnnotator"/>
 
         <lang.commenter
-                language="DataFusion"
-                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionCommenter"
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.ArcCommenter"
         />
         <psi.referenceContributor
-                language="DataFusion"
-                implementation="com.github.idevelopthings.customlanguageplugin.DataFusionReferenceContributor"
+                language="Arc"
+                implementation="com.github.idevelopthings.arc.ArcReferenceContributor"
         />
         <completion.contributor
-                language="DataFusion"
-                implementationClass="com.github.idevelopthings.customlanguageplugin.DataFusionCompletionContributor"
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.completion.ArcCompletionContributor"
         />
-
-
+        <lang.foldingBuilder
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.language.ArcFoldingBuilder"
+        />
+        <lang.braceMatcher
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.language.ArcBraceMatcher"
+        />
+        <gotoSymbolContributor
+                implementation="com.github.idevelopthings.arc.language.ArcSymbolByNameContributor"
+        />
+        <lang.psiStructureViewFactory
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.structure.ArcStructureViewFactory"
+        />
+        <navbar implementation="com.github.idevelopthings.arc.language.ArcStructureAwareNavbar"/>
+        <lang.formatter
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.language.formatting.ArcFormattingModelBuilder"
+        />
+        <codeStyleSettingsProvider
+                implementation="com.github.idevelopthings.arc.language.formatting.ArcCodeStyleSettingsProvider"
+        />
+        <langCodeStyleSettingsProvider
+                implementation="com.github.idevelopthings.arc.language.formatting.ArcLanguageCodeStyleSettingsProvider"
+        />
+        <lang.findUsagesProvider
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.language.ArcFindUsagesProvider"
+        />
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.idevelopthings.customlanguageplugin.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+        <listener class="com.github.idevelopthings.arc.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+
+        <listener class="org.wso2.lsp4intellij.listeners.VFSListener"
+                  topic="com.intellij.openapi.vfs.VirtualFileListener"/>
+        <listener class="org.wso2.lsp4intellij.listeners.LSPProjectManagerListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
+
+
 </idea-plugin>

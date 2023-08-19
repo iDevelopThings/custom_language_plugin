@@ -1,0 +1,301 @@
+{
+  parserClass="com.github.idevelopthings.arc.parser.ArcParser"
+  parserUtilClass="com.github.idevelopthings.arc.parser.ArcParserUtil"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Arc"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.github.idevelopthings.arc.psi"
+  psiImplPackage="com.github.idevelopthings.arc.psi.impl"
+
+  elementTypeHolderClass="com.github.idevelopthings.arc.psi.ArcTypes"
+  elementTypeClass="com.github.idevelopthings.arc.psi.ArcElementType"
+  tokenTypeClass="com.github.idevelopthings.arc.psi.ArcTokenType"
+
+  psiImplUtilClass="com.github.idevelopthings.arc.psi.impl.ArcPsiImplUtil"
+
+  extends(".*expr")=expression
+
+  tokens=[
+    LINE_COMMENT="regexp://.*"
+    BLOCK_COMMENT="regexp:/\*.*?\*/"
+
+    // Characters
+    COLON=':'
+    COLONCOLON='::'
+    DOT='.'
+    COMMA=','
+    SEMICOLON=';'
+    LCURLY='{'
+    RCURLY='}'
+    LBRACK='['
+    RBRACK=']'
+    LPAREN='('
+    RPAREN=')'
+    DOTDOT='..'
+
+
+    // Operators
+    PLUS='+'
+    PLUSEQ='+='
+    MINUS='-'
+    MINUSEQ='-='
+    MUL='*'
+    MULEQ='*='
+    DIV='/'
+    DIVEQ='/='
+    EQ='='
+    LANGLE='<'
+    LE='<='
+    RANGLE='>'
+    GE='>='
+    EQEQ='=='
+    NE='!='
+    AND='&&'
+    OR='||'
+    NOT='!'
+
+    // Keywords
+    VAR_KW='var'
+    FUNC_KW='func'
+    OBJECT_KW='object'
+    RETURN_KW='return'
+    BREAK_KW='break'
+    CONTINUE_KW='continue'
+    IF_KW='if'
+    ELSE_KW='else'
+    FOR_KW='for'
+    AS_KW='as'
+    STEP_KW='step'
+    IMPORT_KW='import'
+
+//    VALUE_STRING="regexp:(\"[A-Za-z_][A-Za-z0-9_]*\"|'[A-Za-z_][A-Za-z0-9_]*')"
+    VALUE_NULL="regexp:null|NULL"
+    VALUE_BOOL="regexp:true|false"
+    VALUE_INTEGER="regexp:[0-9]+"
+    // .0f 0.0f
+    VALUE_FLOAT="regexp:([-]?[0-9]*\.[0-9]+([Ee][+\-]?[0-9]+)?f|[-]?[0-9]+([Ee][+\-]?[0-9]+)?f)"
+
+    ID="regexp:[a-zA-Z_][a-zA-Z_0-9]*"
+  ]
+
+  generateTokenAccessors=true
+  implements("type|object_id|var_id|func_id")="com.github.idevelopthings.arc.psi.ArcNamedElement"
+  extends("type|object_id|var_id|func_id")="com.github.idevelopthings.arc.psi.impl.ArcNamedElementImpl"
+}
+
+program ::= top_level_declaration*
+
+top_level_declaration ::= !<<eof>> import_statement* (object_declaration | func_declaration) {
+    pin=1
+    recoverWhile=top_level_declaration_recovery_parser
+    mixin="com.github.idevelopthings.arc.psi.impl.ArcDeclarationImpl"
+    implements="com.github.idevelopthings.arc.psi.ArcDeclaration"
+    methods=[getNameIdentifier getName]
+}
+
+private top_level_declaration_recovery_parser ::= !(';' | 'object' | 'func')
+
+type ::= ('[' ']')? ID  {
+  methods=[getName getNameIdentifier getReference]
+}
+object_id ::= ID {
+  methods=[getName getNameIdentifier getReference]
+}
+var_id ::= ID {
+  methods=[getName getNameIdentifier getReference]
+}
+
+object_declaration ::= 'object' object_id object_body {
+  mixin="com.github.idevelopthings.arc.psi.impl.ArcObjectImpl"
+  implements="com.github.idevelopthings.arc.psi.ArcObject"
+  methods=[getName getNameIdentifier getFields getPresentation getMember]
+}
+
+object_body ::= "{" object_field_declaration* "}"
+object_field_key ::= ID {
+    methods=[getReference]
+}
+object_field_declaration ::= object_field_key type
+
+object_instantiate_field ::= object_field_key ":" expression
+object_instantiate_fields ::= object_instantiate_field ("," object_instantiate_field)* ','?
+object_instantiate_expr ::= type "{" object_instantiate_fields "}"?
+
+argument_declaration_list ::= "(" (argument_declaration ("," argument_declaration)*)? ")" {
+    methods=[getPresentation processDeclarations]
+}
+argument_declaration ::= ID type
+
+// Loops:
+// for { }
+// for <id> { }
+// for <expr>...<expr> { }
+// for <expr>...<expr> (as <id>)? (step <number>)? { }
+for_loop_statement ::= 'for' (for_loop_header block_body | block_body)
+for_loop_header ::= (ID | range_expr) ('as' ID)? ('step' expression)?
+
+if_statement ::= 'if' '(' expression ')' block_body else_statement?
+else_statement ::= 'else' (block_body| if_statement)
+
+return_statement ::= 'return' expression ';'? {pin=1}
+
+import_statement ::= 'import' value_string ';'?
+
+variable_declaration ::= "var" var_id type? "=" expression ";"? {
+//    pin=4
+    // recoverWhile=variable_declaration_recovery_parser
+}
+//private variable_declaration_recovery_parser ::= !('\n')
+
+statement ::= if_statement
+    | for_loop_statement
+    | variable_declaration
+    | return_statement
+    | expression ";"?
+{
+//    pin=1
+//    recoverWhile=statement_recovery_parser
+    extends="com.github.idevelopthings.arc.psi.impl.ArcBaseStatementImpl"
+    implements="com.github.idevelopthings.arc.psi.ArcBaseStatement"
+}
+//private statement_recovery_parser ::= !('}' | ';' | ID | '\n')
+
+block_body ::= "{" statement* "}" {pin=1}
+//{pin=2 recoverWhile=block_body_recovery_parser}
+//private block_body_recovery_parser ::= !(';' | '}' | FUNC_KW | OBJECT_KW)
+
+func_declaration ::= FUNC_KW func_receiver_declaration? func_id argument_declaration_list type? block_body {
+    pin=1
+//    pin=4
+//    recoverWhile=func_declaration_recovery_parser
+    extends="com.github.idevelopthings.arc.psi.impl.ArcFunctionImpl"
+    implements="com.github.idevelopthings.arc.psi.ArcFunction"
+    methods=[getName getNameIdentifier getReference getPresentation]
+}
+func_id ::= ID {
+  methods=[getReference]
+}
+func_receiver_declaration ::= "(" func_receiver_name type ")"
+func_receiver_name ::= ID
+
+private func_declaration_recovery_parser ::= !('}' | FUNC_KW | OBJECT_KW)
+
+
+// Dictionaries/hashmap:
+// {a: 1, b: 2} | {'a':1, "b":2}
+dictionary ::= '{' dictionary_fields? '}'
+dictionary_field ::= (ID|value_string) ':' expression
+dictionary_fields ::= dictionary_field (',' dictionary_field)* ','?
+
+// Arrays/lists:
+// [1, 2, 3]
+list ::= '{' list_elements? '}'
+list_elements ::= expression (',' expression)* ','?
+
+//value_expr ::= object_instantiate_expr | VALUE_STRING | VALUE_NULL | VALUE_BOOL | VALUE_INTEGER | VALUE_FLOAT | ID {
+//  mixin="com.github.idevelopthings.arc.psi.impl.ArcBaseExpressionElementImpl"
+//  implements="com.github.idevelopthings.arc.psi.ArcBaseExpressionElement"
+//  methods=[getName getNameIdentifier getReference]
+//}
+
+value_number ::= VALUE_INTEGER | VALUE_FLOAT
+value_string ::= DOUBLE_QUOUTE_STRING | SINGLE_QUOUTE_STRING | BACKTICK_STRING
+
+value_expr ::= object_instantiate_expr
+    | value_string
+    | VALUE_NULL
+    | VALUE_BOOL
+    | value_number
+    | ID
+    | dictionary
+    | list
+{
+//    pin=1
+    mixin="com.github.idevelopthings.arc.psi.impl.ArcBaseExpressionElementImpl"
+    implements="com.github.idevelopthings.arc.psi.ArcBaseExpressionElement"
+    methods=[getName getNameIdentifier getReference]
+}
+
+
+expression ::=
+      assign_expr
+    | call_group
+    | range_expr
+    | add_group
+    | mul_group
+    | unary_group
+    | member_access_expr
+    | array_access_expr
+    | value_expr
+    | paren_expr
+    | compare_group
+
+
+private unary_group ::= unary_plus_expr | unary_min_expr | unary_not_expr
+private mul_group ::= mul_expr | div_expr
+private add_group ::= plus_expr | minus_expr
+private compare_group ::= equals_expr
+                          | not_equals_expr
+                          | less_than_expr
+                          | less_than_or_equals_expr
+                          | greater_than_expr
+                          | greater_than_or_equals_expr
+                          | and_expr
+                          | or_expr
+private call_group ::= call_expr | member_call_expr
+
+paren_expr ::= '(' expression ')'
+
+assign_expr ::= expression ('='|'+='|'-='|'*='|'/=') expression {rightAssociative=true}
+
+unary_min_expr ::= '-' expression
+unary_plus_expr ::= '+' expression
+unary_not_expr ::= '!' expression
+
+minus_expr ::= expression "-" expression
+plus_expr ::= expression "+" expression
+
+div_expr ::= expression '/' expression
+mul_expr ::= expression '*' expression
+
+arg_list_expr ::= expression ("," expression)*
+call_expr ::=  ID ("(" arg_list_expr? ")")
+
+member_access_expr ::= expression (DOT | COLONCOLON) ID {
+    pin=1
+//    pin=2
+//    recoverWhile=member_access_expr_recovery
+    mixin="com.github.idevelopthings.arc.psi.impl.ArcMemberAccessExpressionMixinImpl"
+    methods=[getReference isCallExpression getRHS getLHS]
+}
+//private member_access_expr_recovery ::= !('.' | ';' | '\n')
+//private member_access_expr_recovery ::= !('.' | ';' | '}' | '\n' )
+
+
+array_access_expr ::= expression "[" slice_expr "]" // {pin=2 recoverWhile=memberAccessRecoveryParser}
+
+// [1:2] [1:] [:2] [1]
+slice_expr ::=
+      (expression? ":" expression)
+    | (expression ":" expression?)
+    | expression
+
+//private memberAccessRecoveryParser ::= !('.' | ';' | '}' | ID | '\n')
+
+member_call_expr ::= member_access_expr "(" arg_list_expr? ")" {
+    mixin="com.github.idevelopthings.arc.psi.impl.ArcMemberCallExpressionMixinImpl"
+    methods=[getReference]
+}
+
+range_expr ::= value_expr '..' value_expr
+
+equals_expr ::= expression '==' expression {rightAssociative=true}
+not_equals_expr ::= expression '!=' expression {rightAssociative=true}
+less_than_expr ::= expression '<' expression {rightAssociative=true}
+less_than_or_equals_expr ::= expression '<=' expression {rightAssociative=true}
+greater_than_expr ::= expression '>' expression {rightAssociative=true}
+greater_than_or_equals_expr ::= expression '>=' expression {rightAssociative=true}
+and_expr ::= expression '&&' expression {rightAssociative=true}
+or_expr ::= expression '||' expression {rightAssociative=true}
