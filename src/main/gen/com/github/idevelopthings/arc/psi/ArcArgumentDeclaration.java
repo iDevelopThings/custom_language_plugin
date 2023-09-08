@@ -4,13 +4,17 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.github.idevelopthings.arc.completion.references.ArcResolvable;
 
-public interface ArcArgumentDeclaration extends PsiElement {
+public interface ArcArgumentDeclaration extends ArcResolvable {
+
+  @NotNull
+  ArcArgumentId getArgumentId();
 
   @NotNull
   ArcType getType();
 
-  @NotNull
-  PsiElement getId();
+  @Nullable
+  PsiElement getDotdotdot();
 
 }

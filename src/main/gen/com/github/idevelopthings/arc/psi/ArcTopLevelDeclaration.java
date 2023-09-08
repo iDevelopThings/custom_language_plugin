@@ -5,10 +5,19 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface ArcTopLevelDeclaration extends ArcDeclaration {
+public interface ArcTopLevelDeclaration extends ArcBaseTopLevelDeclaration {
+
+  @Nullable
+  ArcEnumDeclaration getEnumDeclaration();
+
+  @Nullable
+  ArcExternalFuncDeclaration getExternalFuncDeclaration();
 
   @Nullable
   ArcFuncDeclaration getFuncDeclaration();
+
+  @Nullable
+  ArcHttpBlock getHttpBlock();
 
   @NotNull
   List<ArcImportStatement> getImportStatementList();
@@ -16,11 +25,7 @@ public interface ArcTopLevelDeclaration extends ArcDeclaration {
   @Nullable
   ArcObjectDeclaration getObjectDeclaration();
 
-  @Nullable
-  ArcNamedElement getNameIdentifier();
-
-  //WARNING: getName(...) is skipped
-  //matching getName(ArcTopLevelDeclaration, ...)
-  //methods are not found in ArcPsiImplUtil
+  @NotNull
+  String getName();
 
 }

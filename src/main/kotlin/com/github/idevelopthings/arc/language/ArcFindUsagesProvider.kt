@@ -1,6 +1,9 @@
 package com.github.idevelopthings.arc.language
 
 import com.github.idevelopthings.arc.ArcLexerAdapter
+import com.github.idevelopthings.arc.completion.references.ArcResolvable
+import com.github.idevelopthings.arc.psi.ArcObjectFieldDeclaration
+import com.github.idevelopthings.arc.psi.ArcObjectFieldKey
 import com.github.idevelopthings.arc.psi.ArcTokenSets
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner
 import com.intellij.lang.cacheBuilder.WordsScanner
@@ -19,11 +22,17 @@ class ArcFindUsagesProvider : FindUsagesProvider {
 						ArcTokenSets.IDENTIFIERS,
 						ArcTokenSets.COMMENTS,
 						TokenSet.EMPTY
+//						ArcTokenSets.LITERAL_VALUES
 				)
 		}
 
 		override fun canFindUsagesFor(psiElement: PsiElement): Boolean {
-				return psiElement is PsiNamedElement
+				return when (psiElement) {
+						is PsiNamedElement -> true
+						is ArcResolvable -> true
+						is ArcObjectFieldKey -> true
+						else -> false
+				}
 		}
 
 		override fun getHelpId(psiElement: PsiElement): String? {
@@ -31,6 +40,9 @@ class ArcFindUsagesProvider : FindUsagesProvider {
 		}
 
 		override fun getType(element: PsiElement): String {
+				when (element) {
+						is ArcObjectFieldKey -> return (element.parent as ArcObjectFieldDeclaration).type.text
+				}
 				if (element is PsiNamedElement) {
 						return element.name ?: "Unknown"
 				}
@@ -39,6 +51,9 @@ class ArcFindUsagesProvider : FindUsagesProvider {
 		}
 
 		override fun getDescriptiveName(element: PsiElement): String {
+				when (element) {
+						is ArcObjectFieldKey -> return element.id.text
+				}
 				if (element is NavigationItem) {
 						return element.presentation?.locationString + " " + element.presentation?.presentableText
 				}
@@ -47,6 +62,10 @@ class ArcFindUsagesProvider : FindUsagesProvider {
 		}
 
 		override fun getNodeText(element: PsiElement, useFullName: Boolean): String {
+				when (element) {
+						is ArcObjectFieldKey -> return element.text
+				}
+
 				if (element is NavigationItem) {
 						return element.presentation?.presentableText ?: "Unknown"
 				}

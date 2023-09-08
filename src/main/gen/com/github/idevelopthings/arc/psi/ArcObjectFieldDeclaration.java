@@ -4,13 +4,17 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.codeInsight.lookup.LookupElement;
 
-public interface ArcObjectFieldDeclaration extends PsiElement {
+public interface ArcObjectFieldDeclaration extends ArcBaseDeclaration, PsiElementWithLookup {
 
-  @NotNull
+  @Nullable
   ArcObjectFieldKey getObjectFieldKey();
 
-  @NotNull
+  @Nullable
   ArcType getType();
+
+  @NotNull
+  LookupElement getLookupElement();
 
 }

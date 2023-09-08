@@ -8,8 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
+import com.github.idevelopthings.arc.psi.ArcNamedElementImpl;
 import com.github.idevelopthings.arc.psi.*;
-import com.intellij.psi.PsiReference;
+import com.intellij.codeInsight.lookup.LookupElement;
 
 public class ArcVarIdImpl extends ArcNamedElementImpl implements ArcVarId {
 
@@ -35,8 +36,8 @@ public class ArcVarIdImpl extends ArcNamedElementImpl implements ArcVarId {
 
   @Override
   @Nullable
-  public PsiReference getReference() {
-    return ArcPsiImplUtil.getReference(this);
+  public LookupElement getLookupElement() {
+    return ArcPsiUtilImpl.getLookupElement(this);
   }
 
 }

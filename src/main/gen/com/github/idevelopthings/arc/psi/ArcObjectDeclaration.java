@@ -5,33 +5,28 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.util.NlsSafe;
 
 public interface ArcObjectDeclaration extends ArcObject {
 
   @NotNull
-  ArcObjectBody getObjectBody();
+  List<ArcObjectFieldDeclaration> getObjectFieldDeclarationList();
 
   @NotNull
   ArcObjectId getObjectId();
 
   @NotNull
-  PsiElement getObjectKw();
-
-  @Nullable
-  @NlsSafe String getName();
-
-  //WARNING: getNameIdentifier(...) is skipped
-  //matching getNameIdentifier(ArcObjectDeclaration, ...)
-  //methods are not found in ArcPsiImplUtil
+  PsiElement getLcurly();
 
   @NotNull
-  List<ArcObjectFieldDeclaration> getFields();
+  PsiElement getObjectKw();
+
+  @NotNull
+  PsiElement getRcurly();
+
+  @Nullable
+  String getName();
 
   @Nullable
   ItemPresentation getPresentation();
-
-  @Nullable
-  ArcObjectFieldDeclaration getMember(@NotNull String name);
 
 }

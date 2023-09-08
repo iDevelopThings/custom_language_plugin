@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElementImpl;
 import com.github.idevelopthings.arc.psi.*;
 
-public class ArcFuncReceiverDeclarationImpl extends ASTWrapperPsiElement implements ArcFuncReceiverDeclaration {
+public class ArcFuncReceiverDeclarationImpl extends ArcElementImpl implements ArcFuncReceiverDeclaration {
 
   public ArcFuncReceiverDeclarationImpl(@NotNull ASTNode node) {
     super(node);
@@ -28,9 +28,9 @@ public class ArcFuncReceiverDeclarationImpl extends ASTWrapperPsiElement impleme
   }
 
   @Override
-  @NotNull
+  @Nullable
   public ArcFuncReceiverName getFuncReceiverName() {
-    return findNotNullChildByClass(ArcFuncReceiverName.class);
+    return findChildByClass(ArcFuncReceiverName.class);
   }
 
   @Override

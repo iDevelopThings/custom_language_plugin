@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElementImpl;
 import com.github.idevelopthings.arc.psi.*;
 
-public class ArcReturnStatementImpl extends ASTWrapperPsiElement implements ArcReturnStatement {
+public class ArcReturnStatementImpl extends ArcElementImpl implements ArcReturnStatement {
 
   public ArcReturnStatementImpl(@NotNull ASTNode node) {
     super(node);
@@ -34,6 +34,12 @@ public class ArcReturnStatementImpl extends ASTWrapperPsiElement implements ArcR
   }
 
   @Override
+  @Nullable
+  public PsiElement getComma() {
+    return findChildByType(COMMA);
+  }
+
+  @Override
   @NotNull
   public PsiElement getReturnKw() {
     return findNotNullChildByType(RETURN_KW);
@@ -43,6 +49,12 @@ public class ArcReturnStatementImpl extends ASTWrapperPsiElement implements ArcR
   @Nullable
   public PsiElement getSemicolon() {
     return findChildByType(SEMICOLON);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getSemicolonSynthetic() {
+    return findChildByType(SEMICOLON_SYNTHETIC);
   }
 
 }

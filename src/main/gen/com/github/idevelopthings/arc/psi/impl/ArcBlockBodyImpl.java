@@ -8,10 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElementImpl;
 import com.github.idevelopthings.arc.psi.*;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 
-public class ArcBlockBodyImpl extends ASTWrapperPsiElement implements ArcBlockBody {
+public class ArcBlockBodyImpl extends ArcElementImpl implements ArcBlockBody {
 
   public ArcBlockBodyImpl(@NotNull ASTNode node) {
     super(node);
@@ -43,6 +45,11 @@ public class ArcBlockBodyImpl extends ASTWrapperPsiElement implements ArcBlockBo
   @Nullable
   public PsiElement getRcurly() {
     return findChildByType(RCURLY);
+  }
+
+  @Override
+  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @NotNull PsiElement place) {
+    return ArcPsiUtilImpl.processDeclarations(this, processor, state, place);
   }
 
 }

@@ -3,17 +3,17 @@ package com.github.idevelopthings.arc
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
-class ArcFileType : LanguageFileType(ArcLanguage.INSTANCE) {
+class ArcFileType : LanguageFileType(ArcLanguage) {
 		override fun getName(): String {
-				return "Data Fusion"
+				return "Arc"
 		}
 
 		override fun getDescription(): String {
-				return "Data Fusion language file"
+				return "Arc language file"
 		}
 
 		override fun getDefaultExtension(): String {
-				return "sl"
+				return "arc"
 		}
 
 		override fun getIcon(): Icon {

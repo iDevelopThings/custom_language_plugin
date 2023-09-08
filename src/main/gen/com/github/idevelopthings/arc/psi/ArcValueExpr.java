@@ -21,17 +21,13 @@ public interface ArcValueExpr extends ArcExpression, ArcBaseExpressionElement {
   ArcValueString getValueString();
 
   @Nullable
-  PsiElement getId();
-
-  @Nullable
   PsiElement getValueBool();
 
   @Nullable
   PsiElement getValueNull();
 
-  //WARNING: getName(...) is skipped
-  //matching getName(ArcValueExpr, ...)
-  //methods are not found in ArcPsiImplUtil
+  @NotNull
+  String getName();
 
   @Nullable
   PsiElement getNameIdentifier();

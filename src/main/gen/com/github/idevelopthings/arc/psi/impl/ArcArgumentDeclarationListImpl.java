@@ -8,13 +8,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElementImpl;
 import com.github.idevelopthings.arc.psi.*;
-import com.github.idevelopthings.arc.language.presentation.ArgumentDeclarationListPresentation;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 
-public class ArcArgumentDeclarationListImpl extends ASTWrapperPsiElement implements ArcArgumentDeclarationList {
+public class ArcArgumentDeclarationListImpl extends ArcElementImpl implements ArcArgumentDeclarationList {
 
   public ArcArgumentDeclarationListImpl(@NotNull ASTNode node) {
     super(node);
@@ -49,14 +49,14 @@ public class ArcArgumentDeclarationListImpl extends ASTWrapperPsiElement impleme
   }
 
   @Override
-  @NotNull
-  public ArgumentDeclarationListPresentation getPresentation() {
-    return ArcPsiImplUtil.getPresentation(this);
+  @Nullable
+  public ItemPresentation getPresentation() {
+    return ArcPsiUtilImpl.getPresentation(this);
   }
 
   @Override
-  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-    return ArcPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
+  public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @NotNull PsiElement place) {
+    return ArcPsiUtilImpl.processDeclarations(this, processor, state, place);
   }
 
 }

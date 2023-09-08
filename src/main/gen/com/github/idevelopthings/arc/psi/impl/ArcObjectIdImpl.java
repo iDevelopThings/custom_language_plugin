@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
+import com.github.idevelopthings.arc.psi.ArcNamedElementImpl;
 import com.github.idevelopthings.arc.psi.*;
-import com.intellij.psi.PsiReference;
 
 public class ArcObjectIdImpl extends ArcNamedElementImpl implements ArcObjectId {
 
@@ -29,14 +29,20 @@ public class ArcObjectIdImpl extends ArcNamedElementImpl implements ArcObjectId 
 
   @Override
   @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(ID);
+  public String getName() {
+    return ArcPsiUtilImpl.getName(this);
   }
 
   @Override
   @Nullable
-  public PsiReference getReference() {
-    return ArcPsiImplUtil.getReference(this);
+  public PsiElement getNameIdentifier() {
+    return ArcPsiUtilImpl.getNameIdentifier(this);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getId() {
+    return ArcPsiUtilImpl.getId(this);
   }
 
 }

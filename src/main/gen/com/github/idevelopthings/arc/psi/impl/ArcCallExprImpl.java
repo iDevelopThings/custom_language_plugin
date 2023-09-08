@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
 import com.github.idevelopthings.arc.psi.*;
+import com.intellij.psi.PsiReference;
 
 public class ArcCallExprImpl extends ArcExpressionImpl implements ArcCallExpr {
 
@@ -28,27 +29,37 @@ public class ArcCallExprImpl extends ArcExpressionImpl implements ArcCallExpr {
   }
 
   @Override
+  @NotNull
+  public ArcArgList getArgList() {
+    return findNotNullChildByClass(ArcArgList.class);
+  }
+
+  @Override
+  @NotNull
+  public ArcRefExpr getRefExpr() {
+    return findNotNullChildByClass(ArcRefExpr.class);
+  }
+
+  @Override
+  public boolean isBuiltin() {
+    return ArcPsiUtilImpl.isBuiltin(this);
+  }
+
+  @Override
+  public boolean isStatic() {
+    return ArcPsiUtilImpl.isStatic(this);
+  }
+
+  @Override
   @Nullable
-  public ArcExpression getExpression() {
-    return findChildByClass(ArcExpression.class);
+  public ArcSimpleRefExpr getLHS() {
+    return ArcPsiUtilImpl.getLHS(this);
   }
 
   @Override
-  @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(ID);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getLparen() {
-    return findNotNullChildByType(LPAREN);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getRparen() {
-    return findNotNullChildByType(RPAREN);
+  @Nullable
+  public PsiReference getReference() {
+    return ArcPsiUtilImpl.getReference(this);
   }
 
 }

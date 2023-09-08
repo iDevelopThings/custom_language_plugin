@@ -4,8 +4,9 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElement;
 
-public interface ArcIfStatement extends PsiElement {
+public interface ArcIfStatement extends ArcElement {
 
   @NotNull
   ArcBlockBody getBlockBody();
@@ -18,11 +19,5 @@ public interface ArcIfStatement extends PsiElement {
 
   @NotNull
   PsiElement getIfKw();
-
-  @NotNull
-  PsiElement getLparen();
-
-  @NotNull
-  PsiElement getRparen();
 
 }

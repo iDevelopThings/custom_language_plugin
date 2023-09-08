@@ -1,6 +1,5 @@
 package com.github.idevelopthings.arc.structure
 
-import com.github.idevelopthings.arc.ArcUtil
 import com.github.idevelopthings.arc.psi.ArcFile
 import com.github.idevelopthings.arc.psi.ArcObjectDeclaration
 import com.intellij.ide.projectView.PresentationData
@@ -42,15 +41,27 @@ class ArcStructureViewElement(val element: NavigatablePsiElement) : StructureVie
 				when (element) {
 
 						is ArcFile -> {
-								element.getObjectDeclarations().forEach {
+								element.getObjectDeclarations()?.forEach {
 										treeElements.add(ArcStructureViewElement(it as NavigatablePsiElement))
 								}
+//								TypeService.getInstance(element.project).getObjectDeclarations()
+//										.filter { it.containingFile == element }
+
+
+//								element.getObjectDeclarations()?.forEach {
+//										treeElements.add(ArcStructureViewElement(it as NavigatablePsiElement))
+//								}
 						}
 
 						is ArcObjectDeclaration -> {
-								ArcUtil.findMethodDeclarations(element).forEach {
-										treeElements.add(ArcStructureViewElement(it as NavigatablePsiElement))
+								val file = (element as ArcObjectDeclaration).containingFile as ArcFile
+								file.getFunctionDeclarations()?.forEach {
+										if (it.belongsToType(element))
+												treeElements.add(ArcStructureViewElement(it as NavigatablePsiElement))
 								}
+//								ArcUtil.findMethodDeclarations(element).forEach {
+//										treeElements.add(ArcStructureViewElement(it as NavigatablePsiElement))
+//								}
 						}
 
 				}

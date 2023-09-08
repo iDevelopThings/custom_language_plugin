@@ -4,10 +4,11 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.codeInsight.lookup.LookupElement;
 
-public interface ArcVariableDeclaration extends PsiElement {
+public interface ArcVariableDeclaration extends ArcBaseDeclaration {
 
-  @NotNull
+  @Nullable
   ArcExpression getExpression();
 
   @Nullable
@@ -16,13 +17,22 @@ public interface ArcVariableDeclaration extends PsiElement {
   @NotNull
   ArcVarId getVarId();
 
-  @NotNull
+  @Nullable
+  PsiElement getComma();
+
+  @Nullable
   PsiElement getEq();
 
   @Nullable
   PsiElement getSemicolon();
 
+  @Nullable
+  PsiElement getSemicolonSynthetic();
+
   @NotNull
   PsiElement getVarKw();
+
+  @Nullable
+  LookupElement getLookupElement();
 
 }

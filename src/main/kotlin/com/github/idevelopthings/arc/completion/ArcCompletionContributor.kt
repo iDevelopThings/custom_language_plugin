@@ -1,51 +1,101 @@
 package com.github.idevelopthings.arc.completion
 
-import com.github.idevelopthings.arc.ArcLanguage
-import com.github.idevelopthings.arc.ArcPsiUtil
-import com.github.idevelopthings.arc.ArcUtil
-import com.github.idevelopthings.arc.Icons
-import com.github.idevelopthings.arc.psi.ArcObjectDeclaration
+import com.github.idevelopthings.arc.completion.providers.*
+import com.github.idevelopthings.arc.psi.*
 import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.project.Project
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.psi.util.findParentOfType
-import com.intellij.util.ProcessingContext
-import com.github.idevelopthings.arc.psi.ArcType
-import com.github.idevelopthings.arc.psi.ArcTypes
-import com.github.idevelopthings.arc.psi.ArcValueExpr
-import com.intellij.psi.ResolveState
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.patterns.PsiElementPattern
+import com.intellij.psi.*
 
 class ArcCompletionContributor : CompletionContributor() {
+
+
 		init {
 
+
 				extend(
 						CompletionType.BASIC,
-						PlatformPatterns.psiElement()
+						Patterns.localVarPsiPattern(),
+						LocalScopeCompletionProvider()
+				)
 
-								.andOr(
-										PlatformPatterns.psiElement().withParent(PlatformPatterns.psiElement(ArcTypes.MEMBER_ACCESS_EXPR)),
-										PlatformPatterns.psiElement().afterLeaf(".")
-								)
+				extend(
+						CompletionType.BASIC,
+						Patterns.memberCompletionPsiPattern(),
+						MemberCompletionProvider()
+				)
 
-								.withLanguage(ArcLanguage.INSTANCE),
-						ArcCompletionProvider()
+				extend(
+						CompletionType.BASIC,
+						Patterns.localVarPsiPattern(),
+						ArcGlobalCompletionProvider()
+				)
+
+				extend(
+						CompletionType.BASIC,
+						Patterns.typeCompletionPsiPattern(),
+						TypeNameCompletionProvider()
 				)
 				extend(
 						CompletionType.BASIC,
-						PlatformPatterns.psiElement(ArcTypes.ID)
-								.withLanguage(ArcLanguage.INSTANCE),
-						ArcLocalVarCompletionProvider()
+						Patterns.importStatementPsiPattern(),
+						ImportStatementPathCompletionProvider()
 				)
+
 		}
+
+		object Patterns {
+				fun localVarPsiPattern(): PsiElementPattern.Capture<PsiElement> {
+						return PlatformPatterns.psiElement()
+								.inFile(PlatformPatterns.psiFile(ArcFile::class.java))
+								.and(PlatformPatterns.psiElement(ArcTypes.ID))
+								.andNot(PlatformPatterns.psiElement().afterLeaf("."))
+								.and(PlatformPatterns.psiElement().inside(PlatformPatterns.psiElement(ArcTypes.BLOCK_BODY)))
+								.andNot(typeCompletionPsiPattern())
+				}
+
+
+				fun typeCompletionPsiPattern(): PsiElementPattern.Capture<PsiElement> {
+						return PlatformPatterns.psiElement()
+								.inFile(PlatformPatterns.psiFile(ArcFile::class.java))
+								.inside(PlatformPatterns.psiElement(ArcTypes.TYPE))
+				}
+
+				fun importStatementPsiPattern(): PsiElementPattern.Capture<PsiElement> {
+						return PlatformPatterns.psiElement()
+								.inFile(PlatformPatterns.psiFile(ArcFile::class.java))
+								.inside(PlatformPatterns.psiElement(ArcTypes.IMPORT_STATEMENT))
+						// .and(PlatformPatterns.psiElement().inside(PlatformPatterns.psiElement(ArcTypes.VALUE_STRING)))
+				}
+
+				fun memberCompletionPsiPattern(): PsiElementPattern.Capture<PsiElement> {
+						return PlatformPatterns.psiElement()
+								.inFile(PlatformPatterns.psiFile(ArcFile::class.java))
+								.andOr(
+										PlatformPatterns.psiElement().andOr(
+												PlatformPatterns.psiElement().withParent(PlatformPatterns.psiElement(ArcTypes.REF_EXPR)),
+												PlatformPatterns.psiElement().afterLeaf(".")
+										),
+										PlatformPatterns.psiElement().andOr(
+												PlatformPatterns.psiElement().withParent(PlatformPatterns.psiElement(ArcTypes.REF_EXPR)),
+												PlatformPatterns.psiElement().afterLeaf("::")
+										)
+								)
+								.and(PlatformPatterns.psiElement().inside(PlatformPatterns.psiElement(ArcTypes.BLOCK_BODY)))
+								.andNot(typeCompletionPsiPattern())
+
+
+				}
+
+		}
+
 
 		override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
 				super.fillCompletionVariants(parameters, result)
 		}
 }
 
+/*
 class ArcLocalVarCompletionProvider : CompletionProvider<CompletionParameters?>() {
 		override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
 
@@ -55,123 +105,150 @@ class ArcLocalVarCompletionProvider : CompletionProvider<CompletionParameters?>(
 						return
 				}
 
-				val parent = element.findParentOfType<ArcValueExpr>()
-				if (parent == null) {
-						thisLogger().warn("Parent is null")
+				val ident = tryGetCorrectElementForCompletions(element, parameters)
+				if (ident == null) {
+						thisLogger().warn("[ArcLocalVarCompletionProvider] Resolve Ident is null")
 						return
 				}
 
-				val processor = DeclarationLookupPartialProcessor(parent)
+
+				val processor = DeclarationLookupPartialProcessor(ident)
 
 				PsiTreeUtil.treeWalkUp(
 						processor,
-						parent,
-						parent.containingFile,
+						ident,
+						ident.containingFile,
 						ResolveState.initial()
 				)
 
 				if (processor.resolved.isNotEmpty()) {
 						thisLogger().warn("Resolved ${processor.resolved.size} possible references/declarations")
-						processor.resolved.forEach {
-								result.addElement(
-										LookupElementBuilder.create(it.element.text)
-												.withIcon(Icons.LogoLight)
-												.withPsiElement(it.element)
-								)
+
+						val added = mutableListOf<String>()
+						val nonElementLookups = mutableListOf<PsiElementResolveResult>()
+						nonElementLookups.addAll(processor.resolved.filter {
+								return@filter it.element !is PsiElementWithLookup
+						})
+
+						processor.resolved.filter {
+								return@filter it.element is PsiElementWithLookup
+						}.forEach {
+								added.add(it.element.text)
+								result.addElement((it.element as PsiElementWithLookup).getLookupElement())
 						}
-				}
 
-		}
-}
+						if (added.isEmpty()) {
+								val extraLookups = mutableListOf<LookupElement>()
 
-class ArcCompletionProvider : CompletionProvider<CompletionParameters?>() {
-		override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-				val position = parameters.position
-				val project: Project = position.project
-
-//				logger<ArcCompletionContributor>().warn("gib lookups pls")
-
-				// We need to find the previous identifiers name
-				// We can either be at `var.` or `var.x`<- x being some user input
-				// We need to find the identifier before the dot
-
-				var ident = position.node
-				var referenceVar = position.node
-
-				var identType: ArcType? = null
-
-				if (ident.treePrev != ArcTypes.DOT) {
-						// If we're not at a DOT, then we're already past `var.`, we're now at `var.x`
-						// Now we just look up `var`
-						referenceVar = ident.treePrev
-						while (
-								referenceVar.elementType != ArcTypes.ID &&
-								referenceVar.elementType != ArcTypes.VALUE_EXPR
-						) {
-								referenceVar = referenceVar.treePrev
-						}
-				}
-
-				if (referenceVar.psi is ArcValueExpr) {
-						val objId = ArcPsiUtil.resolveMemberAccessDeclaration(
-								referenceVar.psi,
-								ArcPsiUtil.ResolutionKind.TYPE_DECLARATION
-						)
-						if (objId != null) {
-								(objId.parent as ArcObjectDeclaration).getFields().forEach {
-										result.addElement(
-												LookupElementBuilder.create(it.objectFieldKey.id.text)
-														.withIcon(Icons.LogoLight)
-														.withPsiElement(it.objectFieldKey)
-
-										)
+								nonElementLookups.forEach {
+										if (it.element is ArcNamedElement && !added.contains(it.element.text)) {
+												ArcPsiImplUtil.getLookupElement(it.element)?.let {
+														extraLookups.add(it)
+												}
+										} else if (it.element.parent is ArcNamedElement && !added.contains(it.element.parent.text)) {
+												ArcPsiImplUtil.getLookupElement(it.element.parent)?.let {
+														extraLookups.add(it)
+												}
+										}
 								}
 
-								return
+								result.addAllElements(extraLookups)
 						}
 				}
 
-				identType = ArcUtil.findBlockVarType(project, referenceVar)
+		}
+}
 
-				if (identType == null) {
-						// thisLogger().warn("Type is null")
+fun canUseCompletionElement(element: PsiElement?): Boolean {
+		return element is ArcSimpleRefExpr || element is ArcRefExpr || element?.elementType == ArcTypes.ID
+}
+
+fun tryGetCorrectElementForCompletions(element: PsiElement, parameters: CompletionParameters): PsiElement? {
+		if (element.elementType == ArcTypes.ID) {
+				if (element.parent is ArcSimpleRefExpr) {
+						return element.parent
+				}
+				return element
+		}
+
+		var parent: PsiElement? = element.findParentOfType<ArcSimpleRefExpr>()
+		if (canUseCompletionElement(parent)) {
+				return parent
+		}
+		parent = element.findParentOfType<ArcRefExpr>()
+		if (canUseCompletionElement(parent)) {
+				return parent
+		}
+		parent = parameters.position.node.treePrev?.treePrev?.psi
+		if (canUseCompletionElement(parent)) {
+				return parent
+		}
+
+		if (parent is PsiWhiteSpace) {
+				var ident: PsiElement? = parent
+				while ((ident !is ArcRefExpr)) {
+						if (ident == null) {
+								return null
+						}
+
+						ident = ident.prevSibling
+				}
+
+				if (canUseCompletionElement(ident)) {
+						return ident
+				}
+		}
+
+		return null
+}
+*/
+
+/* class ArcCompletionProvider : CompletionProvider<CompletionParameters?>() {
+		override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+				val position = parameters.position
+				val element = parameters.originalFile.findElementAt(position.textOffset) ?: return
+
+				val ident = tryGetCorrectElementForCompletions(element, parameters)
+				if (ident == null) {
+						thisLogger().warn("[ArcCompletionProvider] Resolve Ident is null")
 						return
 				}
 
-				// thisLogger().warn("Found ident: ${ident.text}")
 
-				val decl = ArcUtil.findObjectDeclarations(project, identType.id.text).firstOrNull()
-				if (decl == null) {
-						// thisLogger().warn("Decl is null")
+				ArcUtil.provideVarRefCompletions(ident).forEach {
+						result.addElement(it.getLookupElement())
+				}
+
+		}
+} */
+
+/*class ArcKeywordCompletionTemplateProviders : CompletionProvider<CompletionParameters?>() {
+		override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+				var element = parameters.originalFile.findElementAt(parameters.position.textOffset)
+
+				if (element !is PsiWhiteSpace) {
+						element = element?.parent?.prevSibling
+				}
+
+				PsiTreeUtil.findFirstParent(element ?: parameters.originalFile.findElementAt(parameters.position.textOffset))
+				{
+						it is ArcBlockBody
+				}?.let {
+						ArcTokenSets.TEMPLATE_SCOPE_COMPLETABLE_KEYWORDS.forEach { (_, v) ->
+								result.addElement(LookupElementBuilder.create(v))
+						}
 						return
 				}
 
-				decl.getFields().forEach {
-						result.addElement(
-								LookupElementBuilder.create(it.objectFieldKey.id.text)
-										.withIcon(Icons.LogoLight)
-										.withPsiElement(it.objectFieldKey)
-
-						)
+				if (element?.findParentOfType<ArcFile>() != null) {
+						ArcTokenSets.TEMPLATE_TOP_LEVEL_COMPLETABLE_KEYWORDS.forEach { (_, v) ->
+								result.addElement(LookupElementBuilder.create(v))
+						}
 				}
 
-//				result.addElement(
-//						LookupElementBuilder.create("Hello").withIcon(Icons.LogoLight)
-//				)
+				thisLogger().warn("Keyword completions: Couldn't find correct scope for keywords?")
 
-//				val lookups = ArcUtil.findTypeDefinitions(project)
-//
-//				logger<ArcCompletionContributor>().warn("Lookups found: ${lookups.size}")
-//
-//				lookups.forEach {
-//						logger<ArcCompletionContributor>().warn("Lookup: ${it.nameIdentifier!!.text}")
-//						result.addElement(
-//								LookupElementBuilder.create(it.nameIdentifier!!.text).withIcon(Icons.LogoLight).withPsiElement(it)
-//						)
-//				}
 
 		}
 
-
-}
-
+}*/

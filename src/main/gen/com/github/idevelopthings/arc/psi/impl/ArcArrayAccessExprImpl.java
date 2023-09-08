@@ -33,16 +33,4 @@ public class ArcArrayAccessExprImpl extends ArcExpressionImpl implements ArcArra
     return PsiTreeUtil.getChildrenOfTypeAsList(this, ArcExpression.class);
   }
 
-  @Override
-  @NotNull
-  public PsiElement getLbrack() {
-    return findNotNullChildByType(LBRACK);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getRbrack() {
-    return findChildByType(RBRACK);
-  }
-
 }

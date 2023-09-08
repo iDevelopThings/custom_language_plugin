@@ -10,10 +10,4 @@ public interface ArcArrayAccessExpr extends ArcExpression {
   @NotNull
   List<ArcExpression> getExpressionList();
 
-  @NotNull
-  PsiElement getLbrack();
-
-  @Nullable
-  PsiElement getRbrack();
-
 }

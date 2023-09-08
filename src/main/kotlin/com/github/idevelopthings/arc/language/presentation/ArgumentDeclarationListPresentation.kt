@@ -5,12 +5,12 @@ import com.intellij.navigation.ItemPresentation
 import javax.swing.Icon
 
 class ArgumentDeclarationListPresentation(private val argumentList: ArcArgumentDeclarationList) : ItemPresentation {
-		override fun getPresentableText(): String? {
+		override fun getPresentableText(): String {
 				val args = argumentList.argumentDeclarationList
 				var str = "("
 
 				args.forEachIndexed { index, arg ->
-						str += arg.id.text
+						str += arg.argumentId.text
 						str += " "
 						str += arg.type.text
 						if (index < args.size - 1) {

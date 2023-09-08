@@ -18,7 +18,7 @@ class ArcCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
 		}
 
 		override fun getConfigurableDisplayName(): String {
-				return ArcLanguage.INSTANCE.displayName
+				return ArcLanguage.displayName
 		}
 
 
@@ -33,7 +33,7 @@ class ArcCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
 
 
 		private class ArcCodeStyleMainPanel(currentSettings: CodeStyleSettings?, settings: CodeStyleSettings?) :
-				TabbedLanguageCodeStylePanel(ArcLanguage.INSTANCE, currentSettings, settings!!) {
+				TabbedLanguageCodeStylePanel(ArcLanguage, currentSettings, settings!!) {
 
 				override fun initTabs(settings: CodeStyleSettings) {
 						addIndentOptionsTab(settings)

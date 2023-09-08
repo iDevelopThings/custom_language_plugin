@@ -4,7 +4,7 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
+import com.intellij.navigation.ItemPresentation;
 
 public interface ArcFuncDeclaration extends ArcFunction {
 
@@ -26,19 +26,10 @@ public interface ArcFuncDeclaration extends ArcFunction {
   @NotNull
   PsiElement getFuncKw();
 
-  //WARNING: getName(...) is skipped
-  //matching getName(ArcFuncDeclaration, ...)
-  //methods are not found in ArcPsiImplUtil
-
-  //WARNING: getNameIdentifier(...) is skipped
-  //matching getNameIdentifier(ArcFuncDeclaration, ...)
-  //methods are not found in ArcPsiImplUtil
+  @NotNull
+  String getName();
 
   @Nullable
-  PsiReference getReference();
-
-  //WARNING: getPresentation(...) is skipped
-  //matching getPresentation(ArcFuncDeclaration, ...)
-  //methods are not found in ArcPsiImplUtil
+  ItemPresentation getPresentation();
 
 }

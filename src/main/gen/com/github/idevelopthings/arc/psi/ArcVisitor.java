@@ -3,24 +3,30 @@ package com.github.idevelopthings.arc.psi;
 
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
+import com.github.idevelopthings.arc.psi.ext.ArcElement;
+import com.github.idevelopthings.arc.completion.references.ArcResolvable;
 import com.intellij.psi.PsiElement;
 
 public class ArcVisitor extends PsiElementVisitor {
 
-  public void visitAndExpr(@NotNull ArcAndExpr o) {
-    visitExpression(o);
+  public void visitAnonymousFunc(@NotNull ArcAnonymousFunc o) {
+    visitFunction(o);
   }
 
-  public void visitArgListExpr(@NotNull ArcArgListExpr o) {
-    visitExpression(o);
+  public void visitArgList(@NotNull ArcArgList o) {
+    visitElement(o);
   }
 
   public void visitArgumentDeclaration(@NotNull ArcArgumentDeclaration o) {
-    visitPsiElement(o);
+    visitResolvable(o);
   }
 
   public void visitArgumentDeclarationList(@NotNull ArcArgumentDeclarationList o) {
-    visitPsiElement(o);
+    visitElement(o);
+  }
+
+  public void visitArgumentId(@NotNull ArcArgumentId o) {
+    visitNamedElement(o);
   }
 
   public void visitArrayAccessExpr(@NotNull ArcArrayAccessExpr o) {
@@ -32,23 +38,39 @@ public class ArcVisitor extends PsiElementVisitor {
   }
 
   public void visitBlockBody(@NotNull ArcBlockBody o) {
-    visitPsiElement(o);
+    visitElement(o);
+  }
+
+  public void visitBothSliceExpr(@NotNull ArcBothSliceExpr o) {
+    visitExpression(o);
   }
 
   public void visitCallExpr(@NotNull ArcCallExpr o) {
     visitExpression(o);
   }
 
+  public void visitConditionalExpr(@NotNull ArcConditionalExpr o) {
+    visitExpression(o);
+  }
+
+  public void visitDeferStatement(@NotNull ArcDeferStatement o) {
+    visitElement(o);
+  }
+
+  public void visitDeleteStatement(@NotNull ArcDeleteStatement o) {
+    visitElement(o);
+  }
+
   public void visitDictionary(@NotNull ArcDictionary o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitDictionaryField(@NotNull ArcDictionaryField o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitDictionaryFields(@NotNull ArcDictionaryFields o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitDivExpr(@NotNull ArcDivExpr o) {
@@ -56,23 +78,43 @@ public class ArcVisitor extends PsiElementVisitor {
   }
 
   public void visitElseStatement(@NotNull ArcElseStatement o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
-  public void visitEqualsExpr(@NotNull ArcEqualsExpr o) {
-    visitExpression(o);
+  public void visitEnumDeclaration(@NotNull ArcEnumDeclaration o) {
+    visitEnum(o);
+  }
+
+  public void visitEnumFieldDeclaration(@NotNull ArcEnumFieldDeclaration o) {
+    visitEnumField(o);
+  }
+
+  public void visitEnumId(@NotNull ArcEnumId o) {
+    visitNamedElement(o);
+  }
+
+  public void visitEnumValueCtorArg(@NotNull ArcEnumValueCtorArg o) {
+    visitElement(o);
+  }
+
+  public void visitEnumValueCtorArgList(@NotNull ArcEnumValueCtorArgList o) {
+    visitElement(o);
   }
 
   public void visitExpression(@NotNull ArcExpression o) {
-    visitPsiElement(o);
+    visitElement(o);
+  }
+
+  public void visitExternalFuncDeclaration(@NotNull ArcExternalFuncDeclaration o) {
+    visitFunction(o);
   }
 
   public void visitForLoopHeader(@NotNull ArcForLoopHeader o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitForLoopStatement(@NotNull ArcForLoopStatement o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitFuncDeclaration(@NotNull ArcFuncDeclaration o) {
@@ -84,51 +126,47 @@ public class ArcVisitor extends PsiElementVisitor {
   }
 
   public void visitFuncReceiverDeclaration(@NotNull ArcFuncReceiverDeclaration o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitFuncReceiverName(@NotNull ArcFuncReceiverName o) {
-    visitPsiElement(o);
+    visitNamedElement(o);
   }
 
-  public void visitGreaterThanExpr(@NotNull ArcGreaterThanExpr o) {
-    visitExpression(o);
+  public void visitHttpBlock(@NotNull ArcHttpBlock o) {
+    visitElement(o);
   }
 
-  public void visitGreaterThanOrEqualsExpr(@NotNull ArcGreaterThanOrEqualsExpr o) {
-    visitExpression(o);
+  public void visitHttpBodyInjection(@NotNull ArcHttpBodyInjection o) {
+    visitElement(o);
+  }
+
+  public void visitHttpRouteDeclaration(@NotNull ArcHttpRouteDeclaration o) {
+    visitElement(o);
   }
 
   public void visitIfStatement(@NotNull ArcIfStatement o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitImportStatement(@NotNull ArcImportStatement o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
-  public void visitLessThanExpr(@NotNull ArcLessThanExpr o) {
+  public void visitIndexAccessExpr(@NotNull ArcIndexAccessExpr o) {
     visitExpression(o);
   }
 
-  public void visitLessThanOrEqualsExpr(@NotNull ArcLessThanOrEqualsExpr o) {
+  public void visitLhsSliceExpr(@NotNull ArcLhsSliceExpr o) {
     visitExpression(o);
   }
 
   public void visitList(@NotNull ArcList o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitListElements(@NotNull ArcListElements o) {
-    visitPsiElement(o);
-  }
-
-  public void visitMemberAccessExpr(@NotNull ArcMemberAccessExpr o) {
-    visitExpression(o);
-  }
-
-  public void visitMemberCallExpr(@NotNull ArcMemberCallExpr o) {
-    visitExpression(o);
+    visitElement(o);
   }
 
   public void visitMinusExpr(@NotNull ArcMinusExpr o) {
@@ -139,24 +177,17 @@ public class ArcVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
-  public void visitNotEqualsExpr(@NotNull ArcNotEqualsExpr o) {
-    visitExpression(o);
-  }
-
-  public void visitObjectBody(@NotNull ArcObjectBody o) {
-    visitPsiElement(o);
-  }
-
   public void visitObjectDeclaration(@NotNull ArcObjectDeclaration o) {
     visitObject(o);
   }
 
   public void visitObjectFieldDeclaration(@NotNull ArcObjectFieldDeclaration o) {
-    visitPsiElement(o);
+    visitBaseDeclaration(o);
+    // visitPsiElementWithLookup(o);
   }
 
   public void visitObjectFieldKey(@NotNull ArcObjectFieldKey o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitObjectId(@NotNull ArcObjectId o) {
@@ -168,14 +199,14 @@ public class ArcVisitor extends PsiElementVisitor {
   }
 
   public void visitObjectInstantiateField(@NotNull ArcObjectInstantiateField o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitObjectInstantiateFields(@NotNull ArcObjectInstantiateFields o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
-  public void visitOrExpr(@NotNull ArcOrExpr o) {
+  public void visitOrErrorExpr(@NotNull ArcOrErrorExpr o) {
     visitExpression(o);
   }
 
@@ -191,12 +222,22 @@ public class ArcVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
-  public void visitReturnStatement(@NotNull ArcReturnStatement o) {
-    visitPsiElement(o);
+  public void visitRefExpr(@NotNull ArcRefExpr o) {
+    visitExpression(o);
+    // visitIdReferenceExpr(o);
   }
 
-  public void visitSliceExpr(@NotNull ArcSliceExpr o) {
+  public void visitReturnStatement(@NotNull ArcReturnStatement o) {
+    visitElement(o);
+  }
+
+  public void visitRhsSliceExpr(@NotNull ArcRhsSliceExpr o) {
     visitExpression(o);
+  }
+
+  public void visitSimpleRefExpr(@NotNull ArcSimpleRefExpr o) {
+    visitRefExpr(o);
+    // visitResolvable(o);
   }
 
   public void visitStatement(@NotNull ArcStatement o) {
@@ -204,11 +245,15 @@ public class ArcVisitor extends PsiElementVisitor {
   }
 
   public void visitTopLevelDeclaration(@NotNull ArcTopLevelDeclaration o) {
-    visitDeclaration(o);
+    visitBaseTopLevelDeclaration(o);
   }
 
   public void visitType(@NotNull ArcType o) {
     visitNamedElement(o);
+  }
+
+  public void visitTypeRef(@NotNull ArcTypeRef o) {
+    visitType(o);
   }
 
   public void visitUnaryMinExpr(@NotNull ArcUnaryMinExpr o) {
@@ -229,43 +274,65 @@ public class ArcVisitor extends PsiElementVisitor {
   }
 
   public void visitValueNumber(@NotNull ArcValueNumber o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitValueString(@NotNull ArcValueString o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitVarId(@NotNull ArcVarId o) {
-    visitNamedElement(o);
+    visitPsiElement(o);
+    // visitPsiElementWithLookup(o);
+    // visitNamedElement(o);
   }
 
   public void visitVariableDeclaration(@NotNull ArcVariableDeclaration o) {
-    visitPsiElement(o);
+    visitBaseDeclaration(o);
+  }
+
+  public void visitResolvable(@NotNull ArcResolvable o) {
+    visitElement(o);
+  }
+
+  public void visitBaseDeclaration(@NotNull ArcBaseDeclaration o) {
+    visitElement(o);
   }
 
   public void visitBaseStatement(@NotNull ArcBaseStatement o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
-  public void visitDeclaration(@NotNull ArcDeclaration o) {
-    visitPsiElement(o);
+  public void visitBaseTopLevelDeclaration(@NotNull ArcBaseTopLevelDeclaration o) {
+    visitElement(o);
+  }
+
+  public void visitEnum(@NotNull ArcEnum o) {
+    visitElement(o);
+  }
+
+  public void visitEnumField(@NotNull ArcEnumField o) {
+    visitElement(o);
   }
 
   public void visitFunction(@NotNull ArcFunction o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitNamedElement(@NotNull ArcNamedElement o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitObject(@NotNull ArcObject o) {
-    visitPsiElement(o);
+    visitElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {
     visitElement(o);
+  }
+
+  public void visitElement(@NotNull ArcElement o) {
+    super.visitElement(o);
   }
 
 }

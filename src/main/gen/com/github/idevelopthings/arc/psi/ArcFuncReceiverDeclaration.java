@@ -4,10 +4,11 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElement;
 
-public interface ArcFuncReceiverDeclaration extends PsiElement {
+public interface ArcFuncReceiverDeclaration extends ArcElement {
 
-  @NotNull
+  @Nullable
   ArcFuncReceiverName getFuncReceiverName();
 
   @NotNull

@@ -4,14 +4,11 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
+import com.github.idevelopthings.arc.psi.ext.ArcElement;
 
-public interface ArcObjectFieldKey extends PsiElement {
+public interface ArcObjectFieldKey extends ArcElement {
 
   @NotNull
   PsiElement getId();
-
-  @Nullable
-  PsiReference getReference();
 
 }

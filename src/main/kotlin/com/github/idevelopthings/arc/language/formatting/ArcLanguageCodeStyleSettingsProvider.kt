@@ -12,7 +12,7 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 class ArcLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
 		override fun getLanguage(): Language {
-				return ArcLanguage.INSTANCE
+				return ArcLanguage
 		}
 
 		override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {

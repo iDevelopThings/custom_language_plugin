@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElementImpl;
 import com.github.idevelopthings.arc.psi.*;
 
-public class ArcListElementsImpl extends ASTWrapperPsiElement implements ArcListElements {
+public class ArcListElementsImpl extends ArcElementImpl implements ArcListElements {
 
   public ArcListElementsImpl(@NotNull ASTNode node) {
     super(node);

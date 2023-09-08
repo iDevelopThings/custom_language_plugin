@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
+import com.github.idevelopthings.arc.psi.ArcBaseStatementImpl;
 import com.github.idevelopthings.arc.psi.*;
 
 public class ArcStatementImpl extends ArcBaseStatementImpl implements ArcStatement {
@@ -28,6 +29,18 @@ public class ArcStatementImpl extends ArcBaseStatementImpl implements ArcStateme
 
   @Override
   @Nullable
+  public ArcDeferStatement getDeferStatement() {
+    return findChildByClass(ArcDeferStatement.class);
+  }
+
+  @Override
+  @Nullable
+  public ArcDeleteStatement getDeleteStatement() {
+    return findChildByClass(ArcDeleteStatement.class);
+  }
+
+  @Override
+  @Nullable
   public ArcExpression getExpression() {
     return findChildByClass(ArcExpression.class);
   }
@@ -36,6 +49,18 @@ public class ArcStatementImpl extends ArcBaseStatementImpl implements ArcStateme
   @Nullable
   public ArcForLoopStatement getForLoopStatement() {
     return findChildByClass(ArcForLoopStatement.class);
+  }
+
+  @Override
+  @Nullable
+  public ArcHttpBodyInjection getHttpBodyInjection() {
+    return findChildByClass(ArcHttpBodyInjection.class);
+  }
+
+  @Override
+  @Nullable
+  public ArcHttpRouteDeclaration getHttpRouteDeclaration() {
+    return findChildByClass(ArcHttpRouteDeclaration.class);
   }
 
   @Override
@@ -58,8 +83,20 @@ public class ArcStatementImpl extends ArcBaseStatementImpl implements ArcStateme
 
   @Override
   @Nullable
+  public PsiElement getComma() {
+    return findChildByType(COMMA);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getSemicolon() {
     return findChildByType(SEMICOLON);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getSemicolonSynthetic() {
+    return findChildByType(SEMICOLON_SYNTHETIC);
   }
 
 }

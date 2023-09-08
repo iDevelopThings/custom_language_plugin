@@ -1,11 +1,13 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
 		id("java") // Java support
+		id("org.jetbrains.grammarkit") version "2022.3.1"
 		alias(libs.plugins.kotlin) // Kotlin support
 		alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
 		alias(libs.plugins.changelog) // Gradle Changelog Plugin
@@ -19,15 +21,10 @@ version = properties("pluginVersion").get()
 // Configure project's dependencies
 repositories {
 		mavenCentral()
-
-		maven("https://jitpack.io")
-
 }
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-//    implementation(libs.annotations)
-		implementation("com.github.ballerina-platform:lsp4intellij:0.95.2")
 }
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
@@ -50,6 +47,7 @@ sourceSets {
 				java {
 						srcDirs("src/main/gen")
 				}
+//				resources.srcDir("src/main/resources")
 		}
 }
 
@@ -76,7 +74,39 @@ koverReport {
 		}
 }
 
+// grammarkit {
+//		tasks.register<org.jetbrains.grammarkit.tasks.GenerateParserTask>("generateParser") {
+//				grammarRoot = file("src/main/java/your/package/path/to/bnf")
+//				outputRoot = file("$buildDir/generated-src")
+//				pathToParser = file("/path/to/Jetbrains/Idea/yourIdeaVersion/plugins/Grammar-Kit/lib/grammar-kit.jar")
+//				maxMemory = "128m"
+//		}
+//}
+
 tasks {
+
+		/* generateLexer {
+				sourceFile.set(file("src/main/kotlin/com/github/idevelopthings/arc/_ArcLexer.flex"))
+				targetDir.set("src/main/gen/com/github/idevelopthings/arc")
+				targetClass.set("_ArcLexer")
+				purgeOldFiles.set(true)
+		}
+		generateParser {
+				sourceFile.set(file("src/main/kotlin/com/github/idevelopthings/arc/Arc.bnf"))
+				targetRoot.set("src/main/gen")
+				pathToParser.set("com/github/idevelopthings/arc/parser/ArcParser.java")
+				pathToPsiRoot.set("com/github/idevelopthings/arc/psi")
+				purgeOldFiles.set(true)
+		}
+		withType<KotlinCompile> {
+				dependsOn(generateLexer, generateParser)
+		} */
+		// Doesn't seem to work with PsiUtilImpl
+
+		// prepareSandbox {
+		// 		destinationDir = file("build/sandbox")
+		// }
+
 		wrapper {
 				gradleVersion = properties("gradleVersion").get()
 		}

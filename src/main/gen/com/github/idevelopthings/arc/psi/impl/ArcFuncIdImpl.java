@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
+import com.github.idevelopthings.arc.psi.ArcNamedElementImpl;
 import com.github.idevelopthings.arc.psi.*;
 import com.intellij.psi.PsiReference;
 
@@ -36,7 +37,7 @@ public class ArcFuncIdImpl extends ArcNamedElementImpl implements ArcFuncId {
   @Override
   @Nullable
   public PsiReference getReference() {
-    return ArcPsiImplUtil.getReference(this);
+    return ArcPsiUtilImpl.getReference(this);
   }
 
 }

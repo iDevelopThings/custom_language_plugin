@@ -8,11 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ext.ArcElementImpl;
 import com.github.idevelopthings.arc.psi.*;
-import com.intellij.psi.PsiReference;
 
-public class ArcObjectFieldKeyImpl extends ASTWrapperPsiElement implements ArcObjectFieldKey {
+public class ArcObjectFieldKeyImpl extends ArcElementImpl implements ArcObjectFieldKey {
 
   public ArcObjectFieldKeyImpl(@NotNull ASTNode node) {
     super(node);
@@ -32,12 +31,6 @@ public class ArcObjectFieldKeyImpl extends ASTWrapperPsiElement implements ArcOb
   @NotNull
   public PsiElement getId() {
     return findNotNullChildByType(ID);
-  }
-
-  @Override
-  @Nullable
-  public PsiReference getReference() {
-    return ArcPsiImplUtil.getReference(this);
   }
 
 }

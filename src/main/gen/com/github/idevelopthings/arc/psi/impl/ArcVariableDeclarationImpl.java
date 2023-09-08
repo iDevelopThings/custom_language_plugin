@@ -8,10 +8,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ArcBaseDeclarationImpl;
 import com.github.idevelopthings.arc.psi.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 
-public class ArcVariableDeclarationImpl extends ASTWrapperPsiElement implements ArcVariableDeclaration {
+public class ArcVariableDeclarationImpl extends ArcBaseDeclarationImpl implements ArcVariableDeclaration {
 
   public ArcVariableDeclarationImpl(@NotNull ASTNode node) {
     super(node);
@@ -28,9 +29,9 @@ public class ArcVariableDeclarationImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  @NotNull
+  @Nullable
   public ArcExpression getExpression() {
-    return findNotNullChildByClass(ArcExpression.class);
+    return findChildByClass(ArcExpression.class);
   }
 
   @Override
@@ -46,9 +47,15 @@ public class ArcVariableDeclarationImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  @NotNull
+  @Nullable
+  public PsiElement getComma() {
+    return findChildByType(COMMA);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getEq() {
-    return findNotNullChildByType(EQ);
+    return findChildByType(EQ);
   }
 
   @Override
@@ -58,9 +65,21 @@ public class ArcVariableDeclarationImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
+  @Nullable
+  public PsiElement getSemicolonSynthetic() {
+    return findChildByType(SEMICOLON_SYNTHETIC);
+  }
+
+  @Override
   @NotNull
   public PsiElement getVarKw() {
     return findNotNullChildByType(VAR_KW);
+  }
+
+  @Override
+  @Nullable
+  public LookupElement getLookupElement() {
+    return ArcPsiUtilImpl.getLookupElement(this);
   }
 
 }

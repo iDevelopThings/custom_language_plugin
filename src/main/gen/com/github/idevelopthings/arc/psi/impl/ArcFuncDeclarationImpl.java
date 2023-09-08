@@ -8,8 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
+import com.github.idevelopthings.arc.psi.ArcFunctionImpl;
 import com.github.idevelopthings.arc.psi.*;
-import com.intellij.psi.PsiReference;
+import com.intellij.navigation.ItemPresentation;
 
 public class ArcFuncDeclarationImpl extends ArcFunctionImpl implements ArcFuncDeclaration {
 
@@ -64,9 +65,15 @@ public class ArcFuncDeclarationImpl extends ArcFunctionImpl implements ArcFuncDe
   }
 
   @Override
+  @NotNull
+  public String getName() {
+    return ArcPsiUtilImpl.getName(this);
+  }
+
+  @Override
   @Nullable
-  public PsiReference getReference() {
-    return ArcPsiImplUtil.getReference(this);
+  public ItemPresentation getPresentation() {
+    return ArcPsiUtilImpl.getPresentation(this);
   }
 
 }

@@ -1,0 +1,70 @@
+<templateSet group="Arc">
+    <template name="object" value="object $NAME$ {&#10;    $END$&#10;}" description="Define an Object" toReformat="false" toShortenFQNames="false">
+        <variable name="NAME" expression="complete()" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="Arc" value="true" />
+            <option name="File" value="true" />
+        </context>
+    </template>
+    <template name="func" value="func $NAME$($PARAMETERS$) $RETURN_TYPE$ {&#10;    $END$&#10;}" description="Define a global function" toReformat="true" toShortenFQNames="false">
+        <variable name="NAME" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <variable name="PARAMETERS" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <variable name="RETURN_TYPE" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="Arc" value="true" />
+            <option name="File" value="true" />
+        </context>
+    </template>
+    <template name="func_w_receiver" value="func ($RC_NAME$ $RC_TYPE$) $NAME$($PARAMETERS$) $RETURN_TYPE$ {&#10;    $END$&#10;}" description="Define an object function" toReformat="true" toShortenFQNames="false">
+        <variable name="RC_NAME" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <variable name="RC_TYPE" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <variable name="NAME" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <variable name="PARAMETERS" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <variable name="RETURN_TYPE" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="Arc" value="true" />
+            <option name="File" value="true" />
+        </context>
+    </template>
+    <template name="enum" value="enum $NAME$ {&#10;    $END$&#10;}" description="Define an enum" toReformat="true" toShortenFQNames="false">
+        <variable name="NAME" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="Arc" value="true" />
+            <option name="File" value="true" />
+        </context>
+    </template>
+    <template name="var" value="var $NAME$ $TYPE$ = $END$" description="quick var" toReformat="false" toShortenFQNames="true">
+        <variable name="NAME" expression="suggestVariableName()" defaultValue="" alwaysStopAt="true" />
+        <variable name="TYPE" expression="" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="Block" value="true" />
+        </context>
+    </template>
+    <template name="if" value="if $CONDITION$ {&#10;  $END$&#10;}" description="if statement" toReformat="false" toShortenFQNames="true">
+        <variable name="CONDITION" expression="" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="Block" value="true" />
+        </context>
+    </template>
+    <template name="forw" value="for {&#10;  $END$&#10;}" description="for(while loop)" toReformat="false" toShortenFQNames="true">
+        <context>
+            <option name="Block" value="true" />
+        </context>
+    </template>
+    <template name="forr" value="for $LEFT$..$RIGHT$ {&#10;  $END$&#10;}" description="for(range)" toReformat="false" toShortenFQNames="true">
+        <variable name="LEFT" expression="" defaultValue="0" alwaysStopAt="true" />
+        <variable name="RIGHT" expression="" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="Block" value="true" />
+        </context>
+    </template>
+    <template name="forrs" value="for $LEFT$..$RIGHT$ as $NAME$ step $STEP$ {&#10;  $END$&#10;}" description="for(range step - like regular fori)" toReformat="false" toShortenFQNames="true">
+        <variable name="LEFT" expression="" defaultValue="0" alwaysStopAt="true" />
+        <variable name="RIGHT" expression="" defaultValue="" alwaysStopAt="true" />
+        <variable name="NAME" expression="" defaultValue="i" alwaysStopAt="true" />
+        <variable name="STEP" expression="" defaultValue="1" alwaysStopAt="true" />
+        <context>
+            <option name="Block" value="true" />
+        </context>
+    </template>
+</templateSet>

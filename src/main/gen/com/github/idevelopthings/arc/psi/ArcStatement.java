@@ -8,10 +8,22 @@ import com.intellij.psi.PsiElement;
 public interface ArcStatement extends ArcBaseStatement {
 
   @Nullable
+  ArcDeferStatement getDeferStatement();
+
+  @Nullable
+  ArcDeleteStatement getDeleteStatement();
+
+  @Nullable
   ArcExpression getExpression();
 
   @Nullable
   ArcForLoopStatement getForLoopStatement();
+
+  @Nullable
+  ArcHttpBodyInjection getHttpBodyInjection();
+
+  @Nullable
+  ArcHttpRouteDeclaration getHttpRouteDeclaration();
 
   @Nullable
   ArcIfStatement getIfStatement();
@@ -23,6 +35,12 @@ public interface ArcStatement extends ArcBaseStatement {
   ArcVariableDeclaration getVariableDeclaration();
 
   @Nullable
+  PsiElement getComma();
+
+  @Nullable
   PsiElement getSemicolon();
+
+  @Nullable
+  PsiElement getSemicolonSynthetic();
 
 }

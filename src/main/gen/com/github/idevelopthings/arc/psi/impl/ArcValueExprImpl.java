@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
+import com.github.idevelopthings.arc.psi.ArcBaseExpressionElementImpl;
 import com.github.idevelopthings.arc.psi.*;
 import com.intellij.psi.PsiReference;
 
@@ -53,12 +54,6 @@ public class ArcValueExprImpl extends ArcBaseExpressionElementImpl implements Ar
 
   @Override
   @Nullable
-  public PsiElement getId() {
-    return findChildByType(ID);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getValueBool() {
     return findChildByType(VALUE_BOOL);
   }
@@ -70,9 +65,21 @@ public class ArcValueExprImpl extends ArcBaseExpressionElementImpl implements Ar
   }
 
   @Override
+  @NotNull
+  public String getName() {
+    return ArcPsiUtilImpl.getName(this);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getNameIdentifier() {
+    return ArcPsiUtilImpl.getNameIdentifier(this);
+  }
+
+  @Override
   @Nullable
   public PsiReference getReference() {
-    return ArcPsiImplUtil.getReference(this);
+    return ArcPsiUtilImpl.getReference(this);
   }
 
 }

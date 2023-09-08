@@ -8,10 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ArcNamedElementImpl;
 import com.github.idevelopthings.arc.psi.*;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.psi.PsiReference;
 
-public class ArcFuncReceiverNameImpl extends ASTWrapperPsiElement implements ArcFuncReceiverName {
+public class ArcFuncReceiverNameImpl extends ArcNamedElementImpl implements ArcFuncReceiverName {
 
   public ArcFuncReceiverNameImpl(@NotNull ASTNode node) {
     super(node);
@@ -31,6 +33,18 @@ public class ArcFuncReceiverNameImpl extends ASTWrapperPsiElement implements Arc
   @NotNull
   public PsiElement getId() {
     return findNotNullChildByType(ID);
+  }
+
+  @Override
+  @Nullable
+  public PsiReference getReference() {
+    return ArcPsiUtilImpl.getReference(this);
+  }
+
+  @Override
+  @Nullable
+  public LookupElement getLookupElement() {
+    return ArcPsiUtilImpl.getLookupElement(this);
   }
 
 }

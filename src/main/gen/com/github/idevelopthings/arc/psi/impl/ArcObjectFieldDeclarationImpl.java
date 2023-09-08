@@ -8,10 +8,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.psi.ArcBaseDeclarationImpl;
 import com.github.idevelopthings.arc.psi.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 
-public class ArcObjectFieldDeclarationImpl extends ASTWrapperPsiElement implements ArcObjectFieldDeclaration {
+public class ArcObjectFieldDeclarationImpl extends ArcBaseDeclarationImpl implements ArcObjectFieldDeclaration {
 
   public ArcObjectFieldDeclarationImpl(@NotNull ASTNode node) {
     super(node);
@@ -28,15 +29,21 @@ public class ArcObjectFieldDeclarationImpl extends ASTWrapperPsiElement implemen
   }
 
   @Override
-  @NotNull
+  @Nullable
   public ArcObjectFieldKey getObjectFieldKey() {
-    return findNotNullChildByClass(ArcObjectFieldKey.class);
+    return findChildByClass(ArcObjectFieldKey.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public ArcType getType() {
-    return findNotNullChildByClass(ArcType.class);
+    return findChildByClass(ArcType.class);
+  }
+
+  @Override
+  @Nullable
+  public LookupElement getLookupElement() {
+    return ArcPsiUtilImpl.getLookupElement(this);
   }
 
 }

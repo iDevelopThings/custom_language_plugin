@@ -1,12 +1,13 @@
 package com.github.idevelopthings.arc.listeners
 
+import com.github.idevelopthings.arc.language.ArcBuiltinsProvider
 import com.intellij.openapi.application.ApplicationActivationListener
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.wm.IdeFrame
 
 internal class MyApplicationActivationListener : ApplicationActivationListener {
 
-    override fun applicationActivated(ideFrame: IdeFrame) {
-        thisLogger().warn("Don't forget to remove all non-needed sample code files with their corresponding registration entries in `plugin.xml`.")
-    }
+		override fun applicationActivated(ideFrame: IdeFrame) {
+				thisLogger().warn("Don't forget to remove all non-needed sample code files with their corresponding registration entries in `plugin.xml`.")
+		}
 }

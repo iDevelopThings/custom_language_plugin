@@ -3,6 +3,7 @@ package com.github.idevelopthings.arc.language
 import com.github.idevelopthings.arc.ArcUtil
 import com.intellij.navigation.ChooseByNameContributorEx
 import com.intellij.navigation.NavigationItem
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Processor
@@ -14,12 +15,16 @@ import java.util.*
 class ArcSymbolByNameContributor : ChooseByNameContributorEx {
 
 		override fun processNames(processor: Processor<in String>, scope: GlobalSearchScope, filter: IdFilter?) {
+				thisLogger().warn("Processing symbol names...")
+
 				val project: Project = scope.project!!
 				val declarationNameList = ArrayList<String>()
 
-				ArcUtil.findAllDeclarations(project) {
-						it.getNameIdentifier()?.let {
-								declarationNameList.add(it.text)
+				ArcUtil.forAllFiles(project) { file ->
+						file.getTopLevelDeclarations()?.forEach { decl ->
+								decl.getNameIdentifier()?.let {
+										declarationNameList.add(it.text)
+								}
 						}
 				}
 
@@ -28,11 +33,14 @@ class ArcSymbolByNameContributor : ChooseByNameContributorEx {
 
 		override fun processElementsWithName(name: String, processor: Processor<in NavigationItem>, parameters: FindSymbolParameters) {
 				val items = ArrayList<NavigationItem>()
+				thisLogger().warn("Processing elements with name $name...")
 
-				ArcUtil.findAllDeclarations(parameters.project) {
-						it.getNameIdentifier()?.let {
-								if (name == it.text) {
-										items.add(it as NavigationItem)
+				ArcUtil.forAllFiles(parameters.project) { file ->
+						file.getTopLevelDeclarations()?.forEach { decl ->
+								decl.getNameIdentifier()?.let {
+										if (name == it.text) {
+												items.add(it as NavigationItem)
+										}
 								}
 						}
 				}

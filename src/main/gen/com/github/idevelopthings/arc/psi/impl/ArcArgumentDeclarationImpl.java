@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.idevelopthings.arc.psi.ArcTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.idevelopthings.arc.completion.references.ArcBaseResolvable;
 import com.github.idevelopthings.arc.psi.*;
 
-public class ArcArgumentDeclarationImpl extends ASTWrapperPsiElement implements ArcArgumentDeclaration {
+public class ArcArgumentDeclarationImpl extends ArcBaseResolvable implements ArcArgumentDeclaration {
 
   public ArcArgumentDeclarationImpl(@NotNull ASTNode node) {
     super(node);
@@ -29,14 +29,20 @@ public class ArcArgumentDeclarationImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @NotNull
+  public ArcArgumentId getArgumentId() {
+    return findNotNullChildByClass(ArcArgumentId.class);
+  }
+
+  @Override
+  @NotNull
   public ArcType getType() {
     return findNotNullChildByClass(ArcType.class);
   }
 
   @Override
-  @NotNull
-  public PsiElement getId() {
-    return findNotNullChildByType(ID);
+  @Nullable
+  public PsiElement getDotdotdot() {
+    return findChildByType(DOTDOTDOT);
   }
 
 }

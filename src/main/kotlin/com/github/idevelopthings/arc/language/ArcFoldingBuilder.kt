@@ -36,11 +36,6 @@ class ArcFoldingBuilder : FoldingBuilderEx(), DumbAware {
 
 						override fun visitObjectDeclaration(o: ArcObjectDeclaration) {
 								super.visitObjectDeclaration(o)
-								o.objectBody.accept(this)
-						}
-
-						override fun visitObjectBody(o: ArcObjectBody) {
-								super.visitObjectBody(o)
 								descriptors.add(FoldingDescriptor(o.node, o.textRange))
 						}
 

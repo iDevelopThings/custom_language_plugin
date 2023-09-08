@@ -2,10 +2,13 @@ package com.github.idevelopthings.arc
 
 import com.intellij.lang.Language
 
-class ArcLanguage : Language("Arc") {
-
-		companion object {
-				val INSTANCE = ArcLanguage()
-		}
-
+object ArcLanguage : Language(
+		Constants.NAME,
+		// "text/" + Constants.NAME.lowercase(),
+		// "text/x-" + Constants.NAME.lowercase(),
+		// "application/x-" + Constants.NAME.lowercase()
+) {
+		private fun readResolve(): Any = ArcLanguage
+		override fun isCaseSensitive() = true
+		override fun getDisplayName() = Constants.NAME
 }

@@ -10,7 +10,7 @@ import javax.swing.Icon
 class ArcStructureAwareNavbar() : StructureAwareNavBarModelExtension() {
 
 		override val language: Language
-				get() = ArcLanguage.INSTANCE
+				get() = ArcLanguage
 
 		override fun getPresentableText(obj: Any): String? {
 				return when (obj) {

@@ -4,11 +4,12 @@ package com.github.idevelopthings.arc.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.github.idevelopthings.arc.language.presentation.ArgumentDeclarationListPresentation;
+import com.github.idevelopthings.arc.psi.ext.ArcElement;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 
-public interface ArcArgumentDeclarationList extends PsiElement {
+public interface ArcArgumentDeclarationList extends ArcElement {
 
   @NotNull
   List<ArcArgumentDeclaration> getArgumentDeclarationList();
@@ -19,9 +20,9 @@ public interface ArcArgumentDeclarationList extends PsiElement {
   @NotNull
   PsiElement getRparen();
 
-  @NotNull
-  ArgumentDeclarationListPresentation getPresentation();
+  @Nullable
+  ItemPresentation getPresentation();
 
-  boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place);
+  boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @NotNull PsiElement place);
 
 }

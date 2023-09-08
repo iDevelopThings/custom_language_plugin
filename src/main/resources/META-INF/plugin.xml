@@ -1,52 +1,98 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.idevelopthings.arc</id>
-    <name>custom_language_plugin Template</name>
+    <name>Arc Lang</name>
     <vendor>idevelopthings</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <!--    <depends>com.intellij.modules.ultimate</depends>-->
     <depends>PsiViewer</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
-<!--    <application-components>-->
-<!--        <component>-->
-<!--            <implementation-class>org.wso2.lsp4intellij.IntellijLanguageClient</implementation-class>-->
-<!--        </component>-->
-<!--    </application-components>-->
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.idevelopthings.arc.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <!--        <platform.lsp.serverSupportProvider implementation="com.github.idevelopthings.arc.lsp.ArcLspServerSupportProvider"/>-->
+        <!--        <postStartupActivity-->
+        <!--                implementation="com.github.idevelopthings.arc.listeners.OnProjectStartupListener"-->
+        <!--        />-->
 
-        <applicationService serviceImplementation="org.wso2.lsp4intellij.IntellijLanguageClient"/>
-        <editorFactoryListener implementation="org.wso2.lsp4intellij.listeners.LSPEditorListener"/>
-        <fileDocumentManagerListener implementation="org.wso2.lsp4intellij.listeners.LSPFileDocumentManagerListener"/>
+        <!--        <applicationInitializedListener-->
+        <!--                implementation="com.github.idevelopthings.arc.ArcApplicationInitializedListener"-->
+        <!--                id="ArcApplicationInitializedListener"-->
+        <!--                order="last"-->
+        <!--        />-->
 
-        <!-- for displaying notifications by lsp -->
-        <notificationGroup id="lsp" displayType="STICKY_BALLOON"/>
+        <!--        <preloadingActivity-->
+        <!--                implementation="com.github.idevelopthings.arc.lsp.LspPreloadActivity"-->
+        <!--                id="com.github.idevelopthings.arc.lsp.LspPreloadActivity"-->
+        <!--        />-->
 
-        <!-- for displaying the statusbar icon -->
-        <statusBarWidgetFactory implementation="org.wso2.lsp4intellij.statusbar.LSPServerStatusWidgetFactory"
-                                id="org.wso2.lsp4intellij.statusbar.LSPServerStatusWidgetFactory"
-                                order="first" />
-
-        <applicationInitializedListener
-                implementation="com.github.idevelopthings.arc.ArcApplicationInitializedListener"
-                id="ArcApplicationInitializedListener"
-                order="last"
+        <applicationService serviceImplementation="com.github.idevelopthings.arc.settings.ToolSettingsState"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.github.idevelopthings.arc.settings.ToolSettingsConfigurable"
+                id="com.github.idevelopthings.arc.settings.ToolSettingsConfigurable"
+                displayName="Arc Language"
         />
-        <externalAnnotator
-                id="LSPAnnotator"
+        <configurationType
+                implementation="com.github.idevelopthings.arc.settings.runConfiguration.ArcRunConfigurationType"
+        />
+        <notificationGroup
+                id="Arc"
+                displayType="BALLOON"
+                key="arc.notification.group"
+        />
+        <additionalTextAttributes scheme="Default" file="/colorSchemes/attributes.xml"/>
+        <additionalTextAttributes scheme="Dark" file="/colorSchemes/attributes.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="/colorSchemes/attributes.xml"/>
+
+        <codeInsight.template.postfixTemplateProvider
                 language="Arc"
-                implementationClass="org.wso2.lsp4intellij.contributors.annotator.LSPAnnotator"
+                implementationClass="com.github.idevelopthings.arc.templates.postfixTemplates.ArcPostfixTemplateProvider"
         />
+
+        <runLineMarkerContributor
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.language.gutter.ArcRunLineMarkerProvider"
+        />
+
+        <!--        <localInspection implementationClass="com.github.idevelopthings.arc.language.analysis.ArcLocalInspection" language="Arc" displayName="Arc" groupName="Arc" enabledByDefault="true"/>-->
+        <!--        <localInspection implementationClass="com.github.idevelopthings.arc.language.analysis.ArcCheckVariableIsDefined" language="Arc" displayName="Arc" groupName="Arc" enabledByDefault="true"/>-->
+        <!--        <localInspection implementationClass="com.github.idevelopthings.arc.language.analysis.ArcFunctionIsDefined" language="Arc" displayName="Arc" groupName="Arc" enabledByDefault="true"/>-->
+        <externalAnnotator
+                language="Arc"
+                implementationClass="com.github.idevelopthings.arc.language.analysis.ArcErrorCheckingAnnotator"
+        />
+        <projectService
+                serviceInterface="com.github.idevelopthings.arc.language.languageHost.ILanguageHostService"
+                serviceImplementation="com.github.idevelopthings.arc.language.languageHost.LanguageHostService"/>
+
+        <defaultLiveTemplates file="/liveTemplates/Arc.xml"/>
+
+        <liveTemplateContext
+                contextId="Arc"
+                implementation="com.github.idevelopthings.arc.templates.liveTemplates.ArcTemplateContext"
+        />
+        <liveTemplateContext
+                contextId="File"
+                baseContextId="Arc"
+                implementation="com.github.idevelopthings.arc.templates.liveTemplates.ArcFileTemplateContext"
+        />
+        <liveTemplateContext
+                contextId="Block"
+                baseContextId="Arc"
+                implementation="com.github.idevelopthings.arc.templates.liveTemplates.ArcBlockTemplateContext"
+        />
+
 
         <fileType
-                name="Data Fusion"
+                name="Arc"
                 implementationClass="com.github.idevelopthings.arc.ArcFileType"
                 fieldName="INSTANCE"
                 language="Arc"
-                extensions="sl"
+                extensions="arc"
         />
 
         <lang.parserDefinition
@@ -56,14 +102,14 @@
 
         <lang.syntaxHighlighterFactory
                 language="Arc"
-                implementationClass="com.github.idevelopthings.arc.syntax.ArcSyntaxHighlighterFactory"
+                implementationClass="com.github.idevelopthings.arc.language.syntax.ArcSyntaxHighlighterFactory"
         />
 
         <colorSettingsPage
-                implementation="com.github.idevelopthings.arc.syntax.ArcColorSettingsPage"
+                implementation="com.github.idevelopthings.arc.language.syntax.ArcColorSettingsPage"
         />
 
-        <annotator language="Arc" implementationClass="com.github.idevelopthings.arc.syntax.CustomSyntaxAnnotator"/>
+        <annotator language="Arc" implementationClass="com.github.idevelopthings.arc.language.syntax.ArcSyntaxHighlightingAnnotator"/>
 
         <lang.commenter
                 language="Arc"
@@ -71,7 +117,7 @@
         />
         <psi.referenceContributor
                 language="Arc"
-                implementation="com.github.idevelopthings.arc.ArcReferenceContributor"
+                implementation="com.github.idevelopthings.arc.completion.ArcReferenceContributor"
         />
         <completion.contributor
                 language="Arc"
@@ -109,14 +155,14 @@
         />
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.idevelopthings.arc.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-
-        <listener class="org.wso2.lsp4intellij.listeners.VFSListener"
-                  topic="com.intellij.openapi.vfs.VirtualFileListener"/>
-        <listener class="org.wso2.lsp4intellij.listeners.LSPProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <!--    <applicationListeners>-->
+    <!--        <listener class="com.github.idevelopthings.arc.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>-->
+    <!--        <listener class="org.wso2.lsp4intellij.listeners.VFSListener"-->
+    <!--                  topic="com.intellij.openapi.vfs.VirtualFileListener"/>-->
+    <!--        <listener class="org.wso2.lsp4intellij.listeners.LSPProjectManagerListener"-->
+    <!--                  topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
+    <!--    </applicationListeners>-->
 
 
 </idea-plugin>
+
